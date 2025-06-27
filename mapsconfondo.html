@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mapa Vóley con Fondo</title>
+  <style>
+    body {
+      margin: 0;
+      background-image:
+        linear-gradient(to right, #c58000 50px, transparent 1px),
+        linear-gradient(to bottom, #f00 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    #map {
+      height: 1000px;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    h1 {
+      color: rgb(1, 80, 250);
+      text-align: center;
+      font-family: sans-serif;
+    }
+    #listaUsuarios {
+  background: #fff;
+  padding: 15px;
+  max-width: 400px;
+  margin: 20px auto;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+#listaUsuarios ul {
+  padding-left: 20px;
+}
+    
+  </style>
+</head>
+<body>
+  <h1>Pistas de Vóley en Cataluña</h1>
+  <div id="map"></div>
+  <div id="listaUsuarios">
+  <h3>Usuarios unidos a Platja Nova Icària:</h3>
+  <ul id="usuarios"></ul>
+</div>
+
+
+  <!-- Reemplaza TU_API_KEY por tu clave -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyByAcQXmllm6TQNGw5TyCIaJm32ZY6W9Aw&callback=initMap" async defer></script>
+
+  <script>
+const usuariosUnidos = [];
+let infoWindow;
+function initMap() {
+  const españa = { lat: 40.421710, lng: -3.806134 };
+  const map = new google.maps.Map(document.getElementById("map"), {
+    zoom: 7,
+    center: españa,
+  });
+
+  const marcador = new google.maps.Marker({
+    position: { lat: 41.4036, lng: 2.2047 },
+    map: map,
+    title: "Platja Nova Icària"
+  });
+
+infoWindow = new google.maps.InfoWindow({
+  content: generarContenidoInfoWindow()
+});
+
+
+  marcador.addListener("click", () => {
+    infoWindow.open(map, marcador);
+  });
+}
+function generarContenidoInfoWindow() {
+  const listaHTML = usuariosUnidos.map(nombre => `<li>${nombre}</li>`).join("");
+  return `
+    <div>
+      <h3>Platja Nova Icària</h3>
+      <p>Pista popular para jugar al vóley.</p>
+      <button onclick="unirse()">Unirse</button>
+      <h4>Apuntados:</h4>
+      <ul>${listaHTML}</ul>
+    </div>
+  `;
+}
+
+function unirse() {
+  let nombre = prompt("Introduce tu nombre para unirte:");
+  if (nombre && nombre.trim() !== "") {
+    usuariosUnidos.push(nombre);
+    actualizarLista();
+    infoWindow.setContent(generarContenidoInfoWindow()); // Actualiza InfoWindow
+  }
+}
+
+
+function actualizarLista() {
+  const lista = document.getElementById("usuarios");
+  lista.innerHTML = ""; // Limpiar lista anterior
+  usuariosUnidos.forEach(usuario => {
+    const li = document.createElement("li");
+    li.textContent = usuario;
+    lista.appendChild(li);
+  });
+}
+  </script>
+</body>
+</html>
